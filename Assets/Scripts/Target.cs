@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Target : MonoBehaviour
 {
     private Rigidbody targetRb;
@@ -9,7 +10,11 @@ public class Target : MonoBehaviour
     private float maxspeed = 16;
     private float maxTorque = 10;
     private float xRange = 4;
+    private int score;
     private float ySpawnPos = -6;
+    private GameManager gameManager;
+    public int pointValue;
+    public ParticleSystem explosionParticle;
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +23,8 @@ public class Target : MonoBehaviour
         targetRb.AddForce(RandomForce(), ForceMode.Impulse);
         targetRb.AddTorque(RandomTorque(), RandomTorque(), RandomTorque(), ForceMode.Impulse);
         transform.position = RandomSpawnPos();
+        score = 0;
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     }
 
     Vector3 RandomForce() {
@@ -33,10 +40,17 @@ public class Target : MonoBehaviour
     }
 
     private void OnMouseDown()
-    { Destroy(gameObject); }
+    { 
+        Destroy(gameObject);
+        Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+        gameManager.UpdateScore(pointValue); 
+    }
+     
 
     private void OnTriggerEnter(Collider other)
-    { Destroy(gameObject); }
+    { 
+        Destroy(gameObject);
+    }
     // Update is called once per frame
     void Update()
     {
